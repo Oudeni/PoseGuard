@@ -1,10 +1,11 @@
 //
-//   MyTipsView.swift
-//  PoseGuard(2.0)
+//  MyTipsView.swift
+//  PoseGuard (3.0)
 //
-//  Created by Acri Stefano on 09/03/25.
+//  Created by Acri Stefano on 10/03/25.
 //
 
+import Foundation
 import SwiftUI
 import UIKit
 

@@ -1,8 +1,8 @@
 //
-//  PoseGuard_2_0_App.swift
-//  PoseGuard(2.0)
+//  PoseGuard__3_0_App.swift
+//  PoseGuard (3.0)
 //
-//  Created by Acri Stefano on 07/03/25.
+//  Created by Acri Stefano on 10/03/25.
 //
 
 import SwiftUI

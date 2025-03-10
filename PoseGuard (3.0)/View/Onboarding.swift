@@ -1,9 +1,11 @@
 //
-//  OnboardingView.swift
-//  PoseGuard(2.0)
+//  Onboarding.swift
+//  PoseGuard (3.0)
 //
-//  Created by Acri Stefano on 07/03/25.
+//  Created by Acri Stefano on 10/03/25.
 //
+
+import Foundation
 
 import SwiftUI
 

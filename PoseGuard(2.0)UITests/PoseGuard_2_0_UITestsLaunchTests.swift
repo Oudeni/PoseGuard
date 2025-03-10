@@ -1,13 +1,13 @@
 //
-//  PoseGuardUITestsLaunchTests.swift
-//  PoseGuardUITests
+//  PoseGuard_2_0_UITestsLaunchTests.swift
+//  PoseGuard(2.0)UITests
 //
-//  Created by Acri Stefano on 06/03/25.
+//  Created by Acri Stefano on 07/03/25.
 //
 
 import XCTest
 
-final class PoseGuardUITestsLaunchTests: XCTestCase {
+final class PoseGuard_2_0_UITestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true

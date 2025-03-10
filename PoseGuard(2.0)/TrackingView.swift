@@ -1,17 +1,17 @@
-//
-//  TrackingView.swift
-//  PoseGuard
-//
-//  Created by Acri Stefano on 06/03/25.
-//
+import Foundation
 
 import SwiftUI
 
+
 struct TrackingView: View {
+    @State private var showTips = false
     @State private var isTracking = false
     @State private var pulseAnimation = false
     @State private var waveAnimation = false
     @State private var rotationAnimation = false
+    @State private var showReport = false
+    @State private var panOffset: CGFloat = 0
+    @State private var previousPanOffset: CGFloat = 0
     
     // For sound wave animation
     let waveCount = 5
@@ -74,18 +74,18 @@ struct TrackingView: View {
                     Spacer()
                     
                     Button(action: {
-                        // Light action
-                    }) {
-                        Image(systemName: "lightbulb.min")
-                            .font(.system(size: 22))
-                            .foregroundColor(.white)
-                            .padding()
-                            .background(
-                                Circle()
-                                    .fill(Color.black.opacity(0.5))
-                                    .frame(width: 50, height: 50)
-                            )
-                    }
+                            showTips = true
+                        }) {
+                            Image(systemName: "lightbulb")
+                                .font(.system(size: 22))
+                                .foregroundColor(.white)
+                                .padding()
+                                .background(
+                                    Circle()
+                                        .fill(Color.black.opacity(0.5))
+                                        .frame(width: 50, height: 50)
+                                )
+                        }
                 }
                 .padding(.horizontal)
                 
@@ -177,7 +177,7 @@ struct TrackingView: View {
                 
                 Spacer()
                 
-                // Bottom report bar with drag indicator
+                // Bottom report bar with enhanced design and animations - now with drag gesture
                 VStack {
                     // Drag indicator with subtle pulse
                     Rectangle()
@@ -214,6 +214,8 @@ struct TrackingView: View {
                             .transition(.opacity)
                         }
                     }
+                    
+                    // Home indicator - RIMOSSA
                 }
                 .frame(maxWidth: .infinity)
                 .background(
@@ -227,7 +229,27 @@ struct TrackingView: View {
                         .stroke(isTracking ? Color.green.opacity(0.3) : Color.clear, lineWidth: 1)
                         .edgesIgnoringSafeArea(.bottom)
                 )
+                .gesture(
+                    // Add pan gesture to detect swipe up to open report
+                    DragGesture()
+                        .onChanged { value in
+                            let translation = value.translation.height
+                            panOffset = translation
+                        }
+                        .onEnded { value in
+                            let velocity = value.predictedEndTranslation.height
+                            // If swiped up with enough velocity, show the report
+                            if velocity < -50 || value.translation.height < -20 {
+                                showReport = true
+                            }
+                            panOffset = 0
+                        }
+                )
             }
+            
+            // Report view overlay
+            MyReportView(isShowing: $showReport)
+            MyTipsView(isShowing: $showTips)
         }
         .onAppear {
             // Ensure animations start properly when view appears if tracking is already on
@@ -286,4 +308,3 @@ extension View {
 #Preview {
     TrackingView()
 }
-

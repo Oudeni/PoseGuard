@@ -1,13 +1,14 @@
 //
 //  OnboardingView.swift
-//  PoseGuard
+//  PoseGuard(2.0)
 //
-//  Created by Acri Stefano on 06/03/25.
+//  Created by Acri Stefano on 07/03/25.
 //
 
 import SwiftUI
 
 struct OnboardingView: View {
+    @Binding var hasCompletedOnboarding: Bool
     @State private var navigateToTrackingView = false
     
     var body: some View {
@@ -27,7 +28,7 @@ struct OnboardingView: View {
                     InstructionRow(
                         icon: "airpodspro",
                         title: "Connect your airpods",
-                        description: "Make sure you have connected your AirPods to your device."
+                        description: "The app'll use your airpdos' gyroscope to track your posture."
                     )
                     
                     InstructionRow(
@@ -45,7 +46,8 @@ struct OnboardingView: View {
                     Spacer()
                     
                     VStack(spacing: 12) {
-                        ProfileButton()
+                        // Sostituito il ProfileButton con una visualizzazione non cliccabile
+                        ProfileIcon()
                         
                         Text("Remember this app is always working on background, to ensure the privacy of your data remember to check the user's data manual in the learn more section. We will not share your posture's data")
                             .font(.system(size: 12))
@@ -61,7 +63,7 @@ struct OnboardingView: View {
                     }
                     
                     Button(action: {
-                        navigateToTrackingView = true
+                        hasCompletedOnboarding = true
                     }) {
                         Text("Continue")
                             .font(.headline)
@@ -73,12 +75,6 @@ struct OnboardingView: View {
                             .padding(.horizontal)
                     }
                     .padding(.vertical)
-                    .background(
-                        NavigationLink(destination: TrackingView().navigationBarHidden(true), isActive: $navigateToTrackingView) {
-                            EmptyView()
-                        }
-                        .opacity(0)
-                    )
                 }
                 .padding()
             }
@@ -116,24 +112,21 @@ struct InstructionRow: View {
     }
 }
 
-struct ProfileButton: View {
+// Versione non cliccabile dell'omino
+struct ProfileIcon: View {
     var body: some View {
-        Button(action: {
-            // Profile action
-        }) {
-            ZStack {
-                Circle()
-                    .frame(width: 40, height: 40)
-                    .foregroundColor(.green)
-                
-                Image(systemName: "person.fill")
-                    .foregroundColor(.black)
-                    .font(.system(size: 20))
-            }
+        ZStack {
+            Circle()
+                .frame(width: 40, height: 40)
+                .foregroundColor(.green)
+            
+            Image(systemName: "person.fill")
+                .foregroundColor(.black)
+                .font(.system(size: 20))
         }
     }
 }
 
 #Preview {
-    OnboardingView()
+    OnboardingView(hasCompletedOnboarding: .constant(false))
 }

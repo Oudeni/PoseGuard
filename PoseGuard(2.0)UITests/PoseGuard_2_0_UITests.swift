@@ -1,13 +1,13 @@
 //
-//  PoseGuardUITests.swift
-//  PoseGuardUITests
+//  PoseGuard_2_0_UITests.swift
+//  PoseGuard(2.0)UITests
 //
-//  Created by Acri Stefano on 06/03/25.
+//  Created by Acri Stefano on 07/03/25.
 //
 
 import XCTest
 
-final class PoseGuardUITests: XCTestCase {
+final class PoseGuard_2_0_UITests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.

@@ -224,28 +224,26 @@ struct TrackingView: View {
                         .fill(Color(UIColor.darkGray).opacity(0.6))
                         .edgesIgnoringSafeArea(.bottom)
                 )
-                .overlay(
-                    // Add subtle reveal animation for the report panel
-                    RoundedCornerShape(radius: 25, corners: [.topLeft, .topRight])
-                        .stroke(isTracking ? Color.green.opacity(0.3) : Color.clear, lineWidth: 1)
-                        .edgesIgnoringSafeArea(.bottom)
-                )
+                .offset(y: showReport ? 120 : 1 + panOffset) // Effetto sheet
                 .gesture(
-                    // Add pan gesture to detect swipe up to open report
                     DragGesture()
                         .onChanged { value in
                             let translation = value.translation.height
-                            panOffset = translation
+                            if translation > 0 || showReport { // Blocca il trascinamento verso il basso se è già chiuso
+                                panOffset = translation
+                            }
                         }
                         .onEnded { value in
                             let velocity = value.predictedEndTranslation.height
-                            // If swiped up with enough velocity, show the report
-                            if velocity < -50 || value.translation.height < -20 {
+                            if velocity < -50 || value.translation.height < -100 {
                                 showReport = true
+                            } else if value.translation.height > 50 {
+                                showReport = false
                             }
                             panOffset = 0
                         }
                 )
+                .animation(.spring(), value: showReport)
             }
             
             // Report view overlay

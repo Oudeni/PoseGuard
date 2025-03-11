@@ -1,14 +1,121 @@
-//
-//  TrackingView.swift
-//  PoseGuard (3.0)
-//
-//  Created by Acri Stefano on 10/03/25.
-//
-
 import Foundation
-
 import SwiftUI
+import CoreMotion
+import UserNotifications
 
+// Posture Monitor Model (adapted from your first code)
+class PostureMonitorModel: ObservableObject {
+    private let motionManager = CMHeadphoneMotionManager()
+    private let queue = OperationQueue()
+    private let thresholdAngle: Double = 15.0 // Threshold in degrees
+    
+    @Published var isPostureCorrect: Bool = true
+    @Published var postureMessage: String = "Postura corretta"
+    @Published var roll: Double = 0.0
+    @Published var pitch: Double = 0.0
+    @Published var isMonitoring: Bool = false
+    
+    init() {
+        checkAvailability()
+        setupNotifications()
+    }
+    
+    func checkAvailability() {
+        if motionManager.isDeviceMotionAvailable {
+            print("Monitoraggio AirPods disponibile")
+        } else {
+            postureMessage = "AirPods non rilevati o non supportati"
+        }
+    }
+    
+    private func setupNotifications() {
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { granted, error in
+            if granted {
+                print("Notifiche autorizzate")
+            } else if let error = error {
+                print("Errore autorizzazione notifiche: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    func startMonitoring() {
+        guard motionManager.isDeviceMotionAvailable else {
+            postureMessage = "AirPods non rilevati o non supportati"
+            sendNotification(title: "PoseGuard", message: "AirPods non rilevati o non supportati")
+            return
+        }
+        
+        isMonitoring = true
+        motionManager.startDeviceMotionUpdates(to: queue) { [weak self] motion, error in
+            guard let self = self, let motion = motion, error == nil else {
+                DispatchQueue.main.async {
+                    self?.postureMessage = "Errore: \(error?.localizedDescription ?? "Sconosciuto")"
+                    self?.sendNotification(title: "PoseGuard", message: "Errore di monitoraggio")
+                }
+                return
+            }
+            
+            self.checkPosture(motion: motion)
+        }
+    }
+    
+    func stopMonitoring() {
+        motionManager.stopDeviceMotionUpdates()
+        isMonitoring = false
+    }
+    
+    private func checkPosture(motion: CMDeviceMotion) {
+        // Get tilt angles from attitude matrix
+        let roll = motion.attitude.roll * (180.0 / .pi)  // Convert to degrees
+        let pitch = motion.attitude.pitch * (180.0 / .pi)  // Convert to degrees
+        
+        DispatchQueue.main.async {
+            self.roll = roll
+            self.pitch = pitch
+            
+            let wasPostureCorrect = self.isPostureCorrect
+            
+            // Check if any angle exceeds the threshold
+            if abs(roll) > self.thresholdAngle || abs(pitch) > self.thresholdAngle {
+                self.isPostureCorrect = false
+                self.postureMessage = "Attenzione! Postura storta"
+                
+                // Only send notification when posture changes from correct to incorrect
+                if wasPostureCorrect {
+                    self.sendNotification(title: "PoseGuard", message: "Postura storta!")
+                }
+            } else {
+                self.isPostureCorrect = true
+                self.postureMessage = "Postura corretta"
+                
+                // Only send notification when posture changes from incorrect to correct
+                if !wasPostureCorrect {
+                    self.sendNotification(title: "PoseGuard", message: "Postura corretta!")
+                }
+            }
+        }
+    }
+    
+    private func sendNotification(title: String, message: String) {
+        let content = UNMutableNotificationContent()
+        content.title = title
+        content.body = message
+        content.sound = UNNotificationSound.default
+        
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 0.1, repeats: false)
+        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+        
+        UNUserNotificationCenter.current().add(request) { error in
+            if let error = error {
+                print("Errore invio notifica: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    deinit {
+        stopMonitoring()
+    }
+}
 
 struct TrackingView: View {
     @State private var showTips = false
@@ -23,6 +130,9 @@ struct TrackingView: View {
     // For sound wave animation
     let waveCount = 5
     
+    // Add PostureMonitorModel instance
+    @StateObject private var postureMonitor = PostureMonitorModel()
+    
     var body: some View {
         ZStack {
             Color.black.edgesIgnoringSafeArea(.all)
@@ -33,7 +143,7 @@ struct TrackingView: View {
                     // Multiple expanding circles
                     ForEach(0..<3, id: \.self) { index in
                         Circle()
-                            .stroke(Color.green.opacity(0.3), lineWidth: 2)
+                            .stroke(postureMonitor.isPostureCorrect ? Color.green.opacity(0.3) : Color.red.opacity(0.3), lineWidth: 2)
                             .scaleEffect(pulseAnimation ? 2 + CGFloat(index) * 0.4 : 0.2)
                             .opacity(pulseAnimation ? 0 : 0.7)
                             .animation(
@@ -48,7 +158,7 @@ struct TrackingView: View {
                     HStack(spacing: 8) {
                         ForEach(0..<waveCount, id: \.self) { index in
                             RoundedRectangle(cornerRadius: 3)
-                                .fill(Color.green.opacity(0.7))
+                                .fill(postureMonitor.isPostureCorrect ? Color.green.opacity(0.7) : Color.red.opacity(0.7))
                                 .frame(width: 6, height: waveAnimation ? 40 + CGFloat(Int.random(in: 10...60)) : 5)
                                 .animation(
                                     Animation.easeInOut(duration: 0.5)
@@ -64,19 +174,12 @@ struct TrackingView: View {
             VStack {
                 // Top toolbar
                 HStack {
-                    Button(action: {
-                        // Settings action
-                    }) {
-                        Image(systemName: "gear")
-                            .font(.system(size: 22))
-                            .foregroundColor(.white)
-                            .padding()
-                            .background(
-                                Circle()
-                                    .fill(Color.black.opacity(0.5))
-                                    .frame(width: 50, height: 50)
-                            )
-                    }
+                
+                    Text("PoseGuard")
+                        .font(.system(size:24, weight: .medium))
+                        .foregroundColor(.gray)
+                        .transition(.opacity)
+                    
                     
                     Spacer()
                     
@@ -99,12 +202,13 @@ struct TrackingView: View {
                 Spacer()
                 
                 // Status text with animated reveal
-                Text(isTracking ? "Tracking..." : "Tap to Track")
+                Text(isTracking ? postureMonitor.postureMessage : "Tap to Track")
                     .font(.system(size: 24, weight: .medium))
-                    .foregroundColor(isTracking ? .green : .gray)
+                    .foregroundColor(isTracking ? (postureMonitor.isPostureCorrect ? .green : .red) : .gray)
                     .padding(.bottom, 20)
                     .transition(.opacity)
                     .animation(.easeInOut(duration: 0.5), value: isTracking)
+                    .animation(.easeInOut(duration: 0.5), value: postureMonitor.isPostureCorrect)
                 
                 // Main circle button with advanced animations
                 Button(action: {
@@ -119,19 +223,21 @@ struct TrackingView: View {
                             waveAnimation = true
                             rotationAnimation = true
                         }
+                        postureMonitor.startMonitoring()
                     } else {
                         withAnimation {
                             pulseAnimation = false
                             waveAnimation = false
                             rotationAnimation = false
                         }
+                        postureMonitor.stopMonitoring()
                     }
                 }) {
                     ZStack {
                         // Animated outer glow
                         if isTracking {
                             Circle()
-                                .stroke(Color.green.opacity(0.5), lineWidth: 3)
+                                .stroke(postureMonitor.isPostureCorrect ? Color.green.opacity(0.5) : Color.red.opacity(0.5), lineWidth: 3)
                                 .frame(width: 170, height: 170)
                                 .scaleEffect(pulseAnimation ? 1.1 : 1.0)
                                 .animation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true), value: pulseAnimation)
@@ -142,7 +248,10 @@ struct TrackingView: View {
                             .fill(
                                 isTracking ?
                                 LinearGradient(
-                                    gradient: Gradient(colors: [Color.green, Color.green.opacity(0.7)]),
+                                    gradient: Gradient(colors: [
+                                        postureMonitor.isPostureCorrect ? Color.green : Color.red,
+                                        postureMonitor.isPostureCorrect ? Color.green.opacity(0.7) : Color.red.opacity(0.7)
+                                    ]),
                                     startPoint: .topLeading,
                                     endPoint: .bottomTrailing
                                 ) :
@@ -153,12 +262,12 @@ struct TrackingView: View {
                                 )
                             )
                             .frame(width: 150, height: 150)
-                            .shadow(color: isTracking ? Color.green.opacity(0.7) : Color.black.opacity(0.3), radius: 15)
+                            .shadow(color: isTracking ? (postureMonitor.isPostureCorrect ? Color.green.opacity(0.7) : Color.red.opacity(0.7)) : Color.black.opacity(0.3), radius: 15)
                         
                         // Optional glowing effect
                         if isTracking {
                             Circle()
-                                .fill(Color.green.opacity(0.3))
+                                .fill(postureMonitor.isPostureCorrect ? Color.green.opacity(0.3) : Color.red.opacity(0.3))
                                 .frame(width: 150, height: 150)
                                 .blur(radius: 5)
                         }
@@ -184,6 +293,7 @@ struct TrackingView: View {
                 
                 Spacer()
                 
+               
                 // Bottom report bar with enhanced design and animations - now with drag gesture
                 VStack {
                     // Drag indicator with subtle pulse
@@ -221,8 +331,6 @@ struct TrackingView: View {
                             .transition(.opacity)
                         }
                     }
-                    
-                    // Home indicator - RIMOSSA
                 }
                 .frame(maxWidth: .infinity)
                 .background(
@@ -259,11 +367,19 @@ struct TrackingView: View {
             MyTipsView(isShowing: $showTips)
         }
         .onAppear {
+            // Request notification permissions
+            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+                if let error = error {
+                    print("Error requesting notification permission: \(error.localizedDescription)")
+                }
+            }
+            
             // Ensure animations start properly when view appears if tracking is already on
             if isTracking {
                 pulseAnimation = true
                 waveAnimation = true
                 rotationAnimation = true
+                postureMonitor.startMonitoring()
             }
         }
     }

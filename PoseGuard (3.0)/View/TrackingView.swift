@@ -273,21 +273,17 @@ struct TrackingView: View {
 
 // Time counter component (like Shazam's timer during listening)
 struct TimeCounter: View {
-    @State private var seconds = 0
-    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    @StateObject private var viewModel = TimeCounterViewModel()
     
     var body: some View {
         Text(timeString)
             .font(.system(size: 16, weight: .medium))
             .monospacedDigit()
-            .onReceive(timer) { _ in
-                seconds += 1
-            }
     }
     
     var timeString: String {
-        let minutes = seconds / 60
-        let remainingSeconds = seconds % 60
+        let minutes = viewModel.seconds / 60
+        let remainingSeconds = viewModel.seconds % 60
         return String(format: "%01d:%02d", minutes, remainingSeconds)
     }
 }

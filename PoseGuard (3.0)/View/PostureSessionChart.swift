@@ -64,8 +64,8 @@ struct PostureSessionChart: View {
                 ForEach(viewModel.sessionData) { day in
                     // Postura cattiva (in basso)
                     BarMark(
-                        x: .value("Giorno", day.day),
-                        y: .value("Ore", day.cattiveHours)
+                        x: .value("Day", day.day),
+                        y: .value("Hours", day.cattiveHours)
                     )
                     .foregroundStyle(
                         LinearGradient(
@@ -78,8 +78,8 @@ struct PostureSessionChart: View {
                     
                     // Postura media (al centro)
                     BarMark(
-                        x: .value("Giorno", day.day),
-                        y: .value("Ore", day.mediaHours)
+                        x: .value("Day", day.day),
+                        y: .value("Hours", day.mediaHours)
                     )
                     .foregroundStyle(
                         LinearGradient(
@@ -92,8 +92,8 @@ struct PostureSessionChart: View {
                     
                     // Postura buona (in cima)
                     BarMark(
-                        x: .value("Giorno", day.day),
-                        y: .value("Ore", day.buonaHours)
+                        x: .value("Day", day.day),
+                        y: .value("Hours", day.buonaHours)
                     )
                     .foregroundStyle(
                         LinearGradient(

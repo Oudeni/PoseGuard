@@ -29,7 +29,7 @@ struct OnboardingView: View {
                     
                     InstructionRow(
                         icon: "airpodspro",
-                        title: "Connect your airpods",
+                        title: "Connect your AirPods",
                         description: "The app'll use your airpdos' gyroscope to track your posture."
                     )
                     

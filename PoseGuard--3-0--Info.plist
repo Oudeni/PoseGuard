@@ -3,6 +3,6 @@
 <plist version="1.0">
 <dict>
 	<key>NSUserNotificationsUsageDescription</key>
-	<string>the app needs access to your notifications to notify you</string>
+	<string>This app uses notifications to alert you when you have bad posture, helping you maintain proper posture and improve your well-being</string>
 </dict>
 </plist>

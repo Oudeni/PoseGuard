@@ -3,120 +3,6 @@ import SwiftUI
 import CoreMotion
 import UserNotifications
 
-// Posture Monitor Model (adapted from your first code)
-class PostureMonitorModel: ObservableObject {
-    private let motionManager = CMHeadphoneMotionManager()
-    private let queue = OperationQueue()
-    private let thresholdAngle: Double = 15.0 // Threshold in degrees
-    
-    @Published var isPostureCorrect: Bool = true
-    @Published var postureMessage: String = "Postura corretta"
-    @Published var roll: Double = 0.0
-    @Published var pitch: Double = 0.0
-    @Published var isMonitoring: Bool = false
-    
-    init() {
-        checkAvailability()
-        setupNotifications()
-    }
-    
-    func checkAvailability() {
-        if motionManager.isDeviceMotionAvailable {
-            print("Monitoraggio AirPods disponibile")
-        } else {
-            postureMessage = "AirPods non rilevati o non supportati"
-        }
-    }
-    
-    private func setupNotifications() {
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { granted, error in
-            if granted {
-                print("Notifiche autorizzate")
-            } else if let error = error {
-                print("Errore autorizzazione notifiche: \(error.localizedDescription)")
-            }
-        }
-    }
-    
-    func startMonitoring() {
-        guard motionManager.isDeviceMotionAvailable else {
-            postureMessage = "AirPods non rilevati o non supportati"
-            sendNotification(title: "PoseGuard", message: "AirPods non rilevati o non supportati")
-            return
-        }
-        
-        isMonitoring = true
-        motionManager.startDeviceMotionUpdates(to: queue) { [weak self] motion, error in
-            guard let self = self, let motion = motion, error == nil else {
-                DispatchQueue.main.async {
-                    self?.postureMessage = "Errore: \(error?.localizedDescription ?? "Sconosciuto")"
-                    self?.sendNotification(title: "PoseGuard", message: "Errore di monitoraggio")
-                }
-                return
-            }
-            
-            self.checkPosture(motion: motion)
-        }
-    }
-    
-    func stopMonitoring() {
-        motionManager.stopDeviceMotionUpdates()
-        isMonitoring = false
-    }
-    
-    private func checkPosture(motion: CMDeviceMotion) {
-        // Get tilt angles from attitude matrix
-        let roll = motion.attitude.roll * (180.0 / .pi)  // Convert to degrees
-        let pitch = motion.attitude.pitch * (180.0 / .pi)  // Convert to degrees
-        
-        DispatchQueue.main.async {
-            self.roll = roll
-            self.pitch = pitch
-            
-            let wasPostureCorrect = self.isPostureCorrect
-            
-            // Check if any angle exceeds the threshold
-            if abs(roll) > self.thresholdAngle || abs(pitch) > self.thresholdAngle {
-                self.isPostureCorrect = false
-                self.postureMessage = "Attenzione! Postura storta"
-                
-                // Only send notification when posture changes from correct to incorrect
-                if wasPostureCorrect {
-                    self.sendNotification(title: "PoseGuard", message: "Postura storta!")
-                }
-            } else {
-                self.isPostureCorrect = true
-                self.postureMessage = "Postura corretta"
-                
-                // Only send notification when posture changes from incorrect to correct
-                if !wasPostureCorrect {
-                    self.sendNotification(title: "PoseGuard", message: "Postura corretta!")
-                }
-            }
-        }
-    }
-    
-    private func sendNotification(title: String, message: String) {
-        let content = UNMutableNotificationContent()
-        content.title = title
-        content.body = message
-        content.sound = UNNotificationSound.default
-        
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 0.1, repeats: false)
-        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
-        
-        UNUserNotificationCenter.current().add(request) { error in
-            if let error = error {
-                print("Errore invio notifica: \(error.localizedDescription)")
-            }
-        }
-    }
-    
-    deinit {
-        stopMonitoring()
-    }
-}
-
 struct TrackingView: View {
     @State private var showTips = false
     @State private var isTracking = false
@@ -338,28 +224,26 @@ struct TrackingView: View {
                         .fill(Color(UIColor.darkGray).opacity(0.6))
                         .edgesIgnoringSafeArea(.bottom)
                 )
-                .overlay(
-                    // Add subtle reveal animation for the report panel
-                    RoundedCornerShape(radius: 25, corners: [.topLeft, .topRight])
-                        .stroke(isTracking ? Color.green.opacity(0.3) : Color.clear, lineWidth: 1)
-                        .edgesIgnoringSafeArea(.bottom)
-                )
+                .offset(y: showReport ? 120 : 1 + panOffset) // Effetto sheet
                 .gesture(
-                    // Add pan gesture to detect swipe up to open report
                     DragGesture()
                         .onChanged { value in
                             let translation = value.translation.height
-                            panOffset = translation
+                            if translation > 0 || showReport { // Blocca il trascinamento verso il basso se è già chiuso
+                                panOffset = translation
+                            }
                         }
                         .onEnded { value in
                             let velocity = value.predictedEndTranslation.height
-                            // If swiped up with enough velocity, show the report
-                            if velocity < -50 || value.translation.height < -20 {
+                            if velocity < -50 || value.translation.height < -100 {
                                 showReport = true
+                            } else if value.translation.height > 50 {
+                                showReport = false
                             }
                             panOffset = 0
                         }
                 )
+                .animation(.spring(), value: showReport)
             }
             
             // Report view overlay
@@ -387,21 +271,17 @@ struct TrackingView: View {
 
 // Time counter component (like Shazam's timer during listening)
 struct TimeCounter: View {
-    @State private var seconds = 0
-    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    @StateObject private var viewModel = TimeCounterViewModel()
     
     var body: some View {
         Text(timeString)
             .font(.system(size: 16, weight: .medium))
             .monospacedDigit()
-            .onReceive(timer) { _ in
-                seconds += 1
-            }
     }
     
     var timeString: String {
-        let minutes = seconds / 60
-        let remainingSeconds = seconds % 60
+        let minutes = viewModel.seconds / 60
+        let remainingSeconds = viewModel.seconds % 60
         return String(format: "%01d:%02d", minutes, remainingSeconds)
     }
 }

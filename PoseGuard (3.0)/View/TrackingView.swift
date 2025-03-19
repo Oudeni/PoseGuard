@@ -13,6 +13,7 @@ struct TrackingView: View {
     @State private var panOffset: CGFloat = 0
     @State private var previousPanOffset: CGFloat = 0
     
+    @Binding var hasCompletedOnboarding: Bool
     // For sound wave animation
     let waveCount = 5
     
@@ -38,8 +39,9 @@ struct TrackingView: View {
                                     .delay(Double(index) * 0.5),
                                 value: pulseAnimation
                             )
+                            .padding(.bottom, -45)
                     }
-                    
+                    /*
                     // Sound wave animation (vertical bars)
                     HStack(spacing: 8) {
                         ForEach(0..<waveCount, id: \.self) { index in
@@ -53,19 +55,22 @@ struct TrackingView: View {
                                     value: waveAnimation
                                 )
                         }
-                    }
+                    }*/
                 }
             }
             
             VStack {
                 // Top toolbar
                 HStack {
-                
+                    Button(action: {
+                        hasCompletedOnboarding = false
+                    }) {
                     Text("PoseGuard")
                         .font(.system(size:24, weight: .medium))
                         .foregroundColor(.gray)
                         .transition(.opacity)
                     
+                    }
                     
                     Spacer()
                     
@@ -91,10 +96,11 @@ struct TrackingView: View {
                 Text(isTracking ? postureMonitor.postureMessage : "Tap to Track")
                     .font(.system(size: 24, weight: .medium))
                     .foregroundColor(isTracking ? (postureMonitor.isPostureCorrect ? .green : .red) : .gray)
-                    .padding(.bottom, 20)
+                    .padding(.bottom, 50)
                     .transition(.opacity)
                     .animation(.easeInOut(duration: 0.5), value: isTracking)
                     .animation(.easeInOut(duration: 0.5), value: postureMonitor.isPostureCorrect)
+                    .multilineTextAlignment(.center)
                 
                 // Main circle button with advanced animations
                 Button(action: {
@@ -173,13 +179,13 @@ struct TrackingView: View {
                             )
                     }
                 }
-                .padding(.bottom, 40)
+                .padding(.bottom, 100)
                 .scaleEffect(isTracking ? 1.05 : 1.0)
                 .animation(.spring(response: 0.4, dampingFraction: 0.6), value: isTracking)
                 
                 Spacer()
                 
-               
+               /*
                 // Bottom report bar with enhanced design and animations - now with drag gesture
                 VStack {
                     // Drag indicator with subtle pulse
@@ -244,6 +250,7 @@ struct TrackingView: View {
                         }
                 )
                 .animation(.spring(), value: showReport)
+                */
             }
             
             // Report view overlay
@@ -309,5 +316,13 @@ extension View {
 }
 
 #Preview {
-    TrackingView()
+    struct PreviewWrapper: View {
+        @State private var hasCompletedOnboarding = true
+        
+        var body: some View {
+            TrackingView(hasCompletedOnboarding: $hasCompletedOnboarding)
+        }
+    }
+    
+    return PreviewWrapper()
 }

@@ -16,14 +16,18 @@ struct TipCard: View {
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
             // Tip icon
-            ZStack {
-                Circle()
-                    .fill(Color.black.opacity(0.5))
-                    .frame(width: 36, height: 36)
-                
-                Image(systemName: "figure.walk")
-                    .font(.system(size: 18))
-                    .foregroundColor(.green)
+            VStack(alignment: .center) {
+                Spacer()
+                ZStack {
+                    Circle()
+                        .fill(Color.black.opacity(0.5))
+                        .frame(width: 36, height: 36)
+                    
+                    Image(systemName: "figure.walk")
+                        .font(.system(size: 18))
+                        .foregroundColor(.green)
+                }
+                Spacer()
             }
             
             VStack(alignment: .leading, spacing: 4) {
@@ -34,10 +38,10 @@ struct TipCard: View {
                         .foregroundColor(.white)
                     
                     Spacer()
-                    
-                    Text(tip.timeString)
-                        .font(.caption)
-                        .foregroundColor(.gray)
+//                    
+//                    Text(tip.timeString)
+//                        .font(.caption)
+//                        .foregroundColor(.gray)
                 }
                 
                 // Description
@@ -81,10 +85,11 @@ struct MyTipsView: View {
                     // Header
                     HStack {
                         Text("Tips")
-                            .font(.title2)
+                            .font(.title)
                             .fontWeight(.bold)
                             .foregroundColor(.white)
                             .padding(.horizontal)
+                            .padding(.top, 20)
                         
                         Spacer()
                     }
@@ -109,7 +114,7 @@ struct MyTipsView: View {
                         .foregroundColor(.white.opacity(0.5))
                         .padding(.bottom, 5)
                 }
-                .frame(width: geometry.size.width, height: geometry.size.height * 0.95)
+                .frame(width: geometry.size.width, height: geometry.size.height - 100)
                 .background(Color.black.opacity(0.99))
                 .cornerRadius(25, corners: [.topLeft, .topRight])
                 .offset(y: offset)

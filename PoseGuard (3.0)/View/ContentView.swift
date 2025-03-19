@@ -13,8 +13,8 @@ struct ContentView: View {
     var body: some View {
         Group {
             if hasCompletedOnboarding {
-                TrackingView()
-                    .transition(.slide)
+                TrackingView(hasCompletedOnboarding: $hasCompletedOnboarding)
+                    .transition(.opacity)
             } else {
                 OnboardingView(hasCompletedOnboarding: $hasCompletedOnboarding)
                     .transition(.opacity)

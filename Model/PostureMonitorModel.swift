@@ -14,7 +14,7 @@ class PostureMonitorModel: ObservableObject {
     private let queue = OperationQueue()
     private let thresholdAngle: Double = 15.0 // Threshold in degrees
     private var lastNotificationTime: Date?
-    private var timer: Double = 5
+    private var timer: Double = 5 //Notification timer
     
     @Published var isPostureCorrect: Bool = true
     @Published var postureMessage: String = "Correct Posture"
@@ -84,7 +84,7 @@ class PostureMonitorModel: ObservableObject {
             
             if abs(roll) > self.thresholdAngle || abs(pitch) > self.thresholdAngle {
                 self.isPostureCorrect = false
-                self.postureMessage = "Warning! Bad Posture!"
+                self.postureMessage = "Bad Posture!"
                 
                 if !wasPostureCorrect {
                     if let lastTime = self.lastNotificationTime, now.timeIntervalSince(lastTime) < self.timer {

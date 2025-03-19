@@ -57,9 +57,9 @@ struct OnboardingView: View {
                             .foregroundColor(.gray)
                             .padding(.horizontal)
                         
-                        Button("See how your data is managed...") {
-                            // Action
-                        }
+//                        Button("See how your data is managed...") {
+//                            // Action
+//                        }
                         .font(.system(size: 14))
                         .foregroundColor(.green)
                     }

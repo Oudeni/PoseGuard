@@ -17,7 +17,7 @@ class PostureMonitorModel: ObservableObject {
     private var timer: Double = 5 //Notification timer
     
     @Published var isPostureCorrect: Bool = true
-    @Published var postureMessage: String = "Correct Posture"
+    @Published var postureMessage: String = NSLocalizedString("Correct Posture!", comment: "")
     @Published var roll: Double = 0.0
     @Published var pitch: Double = 0.0
     @Published var isMonitoring: Bool = false
@@ -31,7 +31,7 @@ class PostureMonitorModel: ObservableObject {
         if motionManager.isDeviceMotionAvailable {
             print("AirPods tracking available")
         } else {
-            postureMessage = "AirPods not detected or not supported"
+            postureMessage = NSLocalizedString("AirPods not detected or not supported", comment: "")
         }
     }
     
@@ -47,7 +47,7 @@ class PostureMonitorModel: ObservableObject {
     
     func startMonitoring() {
         guard motionManager.isDeviceMotionAvailable else {
-            postureMessage = "AirPods not detected or not supported"
+            postureMessage = NSLocalizedString("AirPods not detected or not supported", comment: "")
             sendNotification(title: "PoseGuard", message: "AirPods not detected or not supported")
             return
         }
@@ -56,7 +56,7 @@ class PostureMonitorModel: ObservableObject {
         motionManager.startDeviceMotionUpdates(to: queue) { [weak self] motion, error in
             guard let self = self, let motion = motion, error == nil else {
                 DispatchQueue.main.async {
-                    self?.postureMessage = "Error: \(error?.localizedDescription ?? "Unknown")"
+                    self?.postureMessage = NSLocalizedString("Error: \(error?.localizedDescription ?? "Unknown")", comment: "")
                     self?.sendNotification(title: "PoseGuard", message: "Tracking error")
                 }
                 return
@@ -84,7 +84,7 @@ class PostureMonitorModel: ObservableObject {
             
             if abs(roll) > self.thresholdAngle || abs(pitch) > self.thresholdAngle {
                 self.isPostureCorrect = false
-                self.postureMessage = "Bad Posture!"
+                self.postureMessage = NSLocalizedString("Bad Posture!", comment: "")
                 
                 if !wasPostureCorrect {
                     if let lastTime = self.lastNotificationTime, now.timeIntervalSince(lastTime) < self.timer {
@@ -95,7 +95,7 @@ class PostureMonitorModel: ObservableObject {
                 }
             } else {
                 self.isPostureCorrect = true
-                self.postureMessage = "Correct Posture!"
+                self.postureMessage = NSLocalizedString("Correct Posture!", comment: "")
                 
                 /*if wasPostureCorrect {
                     if let lastTime = self.lastNotificationTime, now.timeIntervalSince(lastTime) < self.timer {

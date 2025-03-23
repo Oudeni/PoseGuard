@@ -38,10 +38,6 @@ struct TipCard: View {
                         .foregroundColor(.white)
                     
                     Spacer()
-//                    
-//                    Text(tip.timeString)
-//                        .font(.caption)
-//                        .foregroundColor(.gray)
                 }
                 
                 // Description

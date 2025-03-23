@@ -1,0 +1,497 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "%@" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@"
+          }
+        }
+      }
+    },
+    "%@ - %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ - %2$@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ - %@"
+          }
+        }
+      }
+    },
+    "%@h" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@h"
+          }
+        }
+      }
+    },
+    "%lld" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld"
+          }
+        }
+      }
+    },
+    "%lld sess." : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld sess."
+          }
+        }
+      }
+    },
+    "%lld%%" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld%%"
+          }
+        }
+      }
+    },
+    "%lldh" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lldh"
+          }
+        }
+      }
+    },
+    "Adjust your screen height!" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Regola l'altezza dello schermo!"
+          }
+        }
+      }
+    },
+    "AirPods not connected" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AirPods non connesse"
+          }
+        }
+      }
+    },
+    "AirPods not detected or not supported" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AirPods non rilevati o non supportati"
+          }
+        }
+      }
+    },
+    "Avoid slouching and gently roll your shoulders back to open up your chest." : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Evita di curvare la schiena e ruota delicatamente le spalle all'indietro per aprire il torace."
+          }
+        }
+      }
+    },
+    "Bad Posture!" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cattiva"
+          }
+        }
+      }
+    },
+    "Bad: %@ hours" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sbagliata: %@ ore"
+          }
+        }
+      }
+    },
+    "Continue" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continua"
+          }
+        }
+      }
+    },
+    "Correct Posture!" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Postura Corretta!"
+          }
+        }
+      }
+    },
+    "Daily statistics" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Statistiche giornaliere"
+          }
+        }
+      }
+    },
+    "Day" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Giorno"
+          }
+        }
+      }
+    },
+    "Duration: %@ hours" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Durata: %@ ore"
+          }
+        }
+      }
+    },
+    "Engage your core!" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Coinvolgi il tuo nucleo!"
+          }
+        }
+      }
+    },
+    "Ensure your screen is at eye level to prevent neck strain." : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Assicurati che lo schermo sia all'altezza degli occhi per evitare tensioni al collo."
+          }
+        }
+      }
+    },
+    "Good: %@ hours" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ottimo: %@ ore"
+          }
+        }
+      }
+    },
+    "Hours" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ore"
+          }
+        }
+      }
+    },
+    "Keep your feet flat on the ground!" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tieni i piedi piatti a terra!"
+          }
+        }
+      }
+    },
+    "Keep your shoulders back!" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tieni le spalle indietro!"
+          }
+        }
+      }
+    },
+    "Medium Quality: %lld%%" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Qualità Media: %lld%%"
+          }
+        }
+      }
+    },
+    "Medium: %@ hours" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Media: %@ ore"
+          }
+        }
+      }
+    },
+    "My Report" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resoconto"
+          }
+        }
+      }
+    },
+    "No data for today" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No info per oggi"
+          }
+        }
+      }
+    },
+    "OK" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        }
+      }
+    },
+    "PoseGuard" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PoseGuard"
+          }
+        }
+      }
+    },
+    "Posture Analysis" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Analisi della postura"
+          }
+        }
+      }
+    },
+    "Quality" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Qualità"
+          }
+        }
+      }
+    },
+    "Remember this app is always working on background, to ensure the privacy of your data remember to check the user's data manual in the learn more section. We will not share your posture's data" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ricorda che questa app funziona sempre in background, per garantire la privacy dei tuoi dati ricordati di controllare il manuale dei dati utente nella sezione scopri di più. Non condivideremo i dati della tua postura"
+          }
+        }
+      }
+    },
+    "Session Details" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dettagli Sessione"
+          }
+        }
+      }
+    },
+    "Stand up, stretch, and move around every 30-60 minutes to relieve tension." : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alzatevi, fate stretching e muovetevi ogni 30-60 minuti per alleviare la tensione."
+          }
+        }
+      }
+    },
+    "Strengthening your core muscles helps support your spine and improves posture." : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rafforzare i muscoli centrali aiuta a sostenere la colonna vertebrale e migliora la postura."
+          }
+        }
+      }
+    },
+    "Take breaks regularly!" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fai pause regolarmente!"
+          }
+        }
+      }
+    },
+    "Tap to Track" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tocca per tracciare"
+          }
+        }
+      }
+    },
+    "Tap To Track" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tocca per tracciare"
+          }
+        }
+      }
+    },
+    "Tips" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suggerimenti"
+          }
+        }
+      }
+    },
+    "Today's Posture" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La Postura Di Oggi"
+          }
+        }
+      }
+    },
+    "Total hours" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ore Totali"
+          }
+        }
+      }
+    },
+    "Total sessions" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sessioni Totali"
+          }
+        }
+      }
+    },
+    "Tracking error" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Errore durante il tracciamento"
+          }
+        }
+      }
+    },
+    "Wear your AirPods to start tracking your posture" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Indossa gli AirPods per iniziare a monitorare la tua postura"
+          }
+        }
+      }
+    },
+    "Weekly statistics" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Statistiche Settimanali"
+          }
+        }
+      }
+    },
+    "What's\nPoseGuard" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cos'è PoseGuard"
+          }
+        }
+      }
+    },
+    "When sitting, make sure your feet are fully supported and not dangling." : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quando sei seduto, assicurati che i tuoi piedi siano completamente supportati e non penzolanti."
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

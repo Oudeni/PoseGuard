@@ -96,7 +96,7 @@ struct TrackingView: View {
                 Spacer()
                 
                 // Status text with animated reveal
-                Text(isTracking ? postureMonitor.postureMessage : "Tap to Track")
+                Text(isTracking ? postureMonitor.postureMessage : NSLocalizedString("Tap To Track", comment: ""))
                     .font(.system(size: 24, weight: .medium))
                     .foregroundColor(isTracking ? (postureMonitor.isPostureCorrect ? .green : .red) : .gray)
                     .padding(.bottom, 50)

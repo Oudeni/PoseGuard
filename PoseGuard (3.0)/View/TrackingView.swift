@@ -2,6 +2,7 @@ import Foundation
 import SwiftUI
 import CoreMotion
 import UserNotifications
+import AVFoundation
 
 struct TrackingView: View {
     @State private var showTips = false
@@ -10,6 +11,8 @@ struct TrackingView: View {
     @State private var waveAnimation = false
     @State private var rotationAnimation = false
     @State private var showReport = false
+    @State private var showAirPodsAlert = false
+    @State private var motionManager = CMHeadphoneMotionManager()
     @State private var panOffset: CGFloat = 0
     @State private var previousPanOffset: CGFloat = 0
     
@@ -65,28 +68,28 @@ struct TrackingView: View {
                     Button(action: {
                         hasCompletedOnboarding = false
                     }) {
-                    Text("PoseGuard")
-                        .font(.system(size:24, weight: .medium))
-                        .foregroundColor(.gray)
-                        .transition(.opacity)
-                    
+                        Text("PoseGuard")
+                            .font(.system(size:24, weight: .medium))
+                            .foregroundColor(.gray)
+                            .transition(.opacity)
+                        
                     }
                     
                     Spacer()
                     
                     Button(action: {
-                            showTips = true
-                        }) {
-                            Image(systemName: "lightbulb")
-                                .font(.system(size: 22))
-                                .foregroundColor(.white)
-                                .padding()
-                                .background(
-                                    Circle()
-                                        .fill(Color.black.opacity(0.5))
-                                        .frame(width: 50, height: 50)
-                                )
-                        }
+                        showTips = true
+                    }) {
+                        Image(systemName: "lightbulb")
+                            .font(.system(size: 22))
+                            .foregroundColor(.white)
+                            .padding()
+                            .background(
+                                Circle()
+                                    .fill(Color.black.opacity(0.5))
+                                    .frame(width: 50, height: 50)
+                            )
+                    }
                 }
                 .padding(.horizontal)
                 
@@ -104,19 +107,29 @@ struct TrackingView: View {
                 
                 // Main circle button with advanced animations
                 Button(action: {
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        isTracking.toggle()
-                    }
-                    
-                    // Start all animations when tracking begins
-                    if isTracking {
-                        withAnimation {
-                            pulseAnimation = true
-                            waveAnimation = true
-                            rotationAnimation = true
+                    if !isTracking {  // Controlla se stiamo per attivare il tracciamento
+                        areAirPodsConnected { isAirPods in
+                            if isAirPods && motionManager.isDeviceMotionAvailable {
+                                withAnimation(.easeInOut(duration: 0.3)) {
+                                    isTracking = true  // Imposta direttamente su true invece di toggle
+                                }
+                                
+                                    // Avvia tutte le animazioni quando inizia il tracciamento
+                                withAnimation {
+                                    pulseAnimation = true
+                                    waveAnimation = true
+                                    rotationAnimation = true
+                                }
+                                postureMonitor.startMonitoring()
+                            } else {
+                                showAirPodsAlert = true
+                            }
                         }
-                        postureMonitor.startMonitoring()
-                    } else {
+                    } else {  // Se stiamo disattivando il tracciamento, non serve verificare gli AirPods
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            isTracking = false  // Imposta direttamente su false
+                        }
+                        
                         withAnimation {
                             pulseAnimation = false
                             waveAnimation = false
@@ -182,7 +195,9 @@ struct TrackingView: View {
                 .padding(.bottom, 100)
                 .scaleEffect(isTracking ? 1.05 : 1.0)
                 .animation(.spring(response: 0.4, dampingFraction: 0.6), value: isTracking)
-                
+                .alert("AirPods not connected", isPresented: $showAirPodsAlert) {
+                    Button("OK", role: .cancel) {}
+                }
                 Spacer()
                 
                /*
@@ -274,6 +289,69 @@ struct TrackingView: View {
             }
         }
     }
+    
+    func areAirPodsConnected(completion: @escaping (Bool) -> Void) {
+        let motionManager = CMHeadphoneMotionManager()
+        
+            // Verifica se il dispositivo supporta HeadphoneMotion
+        guard motionManager.isDeviceMotionAvailable else {
+            print("Il giroscopio non è disponibile.")
+            completion(false)
+            return
+        }
+        
+        let session = AVAudioSession.sharedInstance()
+        let outputs = session.currentRoute.outputs
+        
+            // Verifica se ci sono cuffie Bluetooth collegate
+        let areHeadphonesConnected = outputs.contains { output in
+            output.portType == .bluetoothA2DP || output.portType == .bluetoothHFP
+        }
+        
+        if !areHeadphonesConnected {
+            print("Nessuna cuffia Bluetooth collegata.")
+            completion(false)
+            return
+        }
+        
+            // Impostiamo un timeout per verificare se riceviamo dati dal giroscopio
+        var receivedMotionData = false
+        var timeoutTimer: Timer?
+        
+            // Inizia a monitorare i dati del giroscopio
+        motionManager.startDeviceMotionUpdates(to: OperationQueue.main) { (data, error) in
+            if error != nil {
+                    // In caso di errore, non sono AirPods con giroscopio
+                timeoutTimer?.invalidate()
+                motionManager.stopDeviceMotionUpdates()
+                if !receivedMotionData {
+                    print("Errore dal giroscopio - non sono AirPods.")
+                    receivedMotionData = true
+                    completion(false)
+                }
+                return
+            }
+            
+            if data != nil && !receivedMotionData {
+                    // Abbiamo ricevuto dati dal giroscopio, sono AirPods
+                timeoutTimer?.invalidate()
+                print("Giroscopio attivo e dati disponibili - sono AirPods.")
+                receivedMotionData = true
+                completion(true)
+                    // Non fermiamo gli aggiornamenti in caso serva continuare a usare i dati
+            }
+        }
+        
+            // Impostiamo un timeout (ad esempio 1 secondo)
+        timeoutTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: false) { _ in
+            if !receivedMotionData {
+                print("Timeout: nessun dato dal giroscopio - non sono AirPods.")
+                motionManager.stopDeviceMotionUpdates()
+                completion(false)
+            }
+        }
+    }
+    
 }
 
 // Time counter component (like Shazam's timer during listening)
@@ -293,7 +371,7 @@ struct TimeCounter: View {
     }
 }
 
-// Custom Shape for specific corner radius
+    // Custom Shape for specific corner radius
 struct RoundedCornerShape: Shape {
     var radius: CGFloat
     var corners: UIRectCorner
@@ -309,7 +387,7 @@ struct RoundedCornerShape: Shape {
 }
 
 extension View {
-    // Custom function name to avoid redeclaration conflict with SwiftUI's built-in cornerRadius
+        // Custom function name to avoid redeclaration conflict with SwiftUI's built-in cornerRadius
     func cornerRadiusForSpecificCorners(_ radius: CGFloat, corners: UIRectCorner) -> some View {
         clipShape(RoundedCornerShape(radius: radius, corners: corners))
     }
